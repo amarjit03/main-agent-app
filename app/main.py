@@ -1,36 +1,26 @@
-from utils import groq_client
-from langchain_core.messages import HumanMessage
-import logging
+from utils.pdf_loader import PDFLoader
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-# Initialize logger
-logger = logging.getLogger(__name__)
 
 def main():
-    """Main function to run the Groq client."""
+    """Main function to extract text from a PDF file and save it as .txt in textdata folder."""
     try:
-        # Initialize the Groq client
-        groq_client_instance = groq_client.groqClient()
+        # Initialize the PDF loader
+        loader = PDFLoader()
         
-        if not groq_client_instance.llm:
-            logger.error("LLM is not initialized. Exiting.")
-            return
+        # Example PDF file path
+        pdf_file = "data/239528_1613926124.pdf"  # Replace with your PDF file
         
-        # Example prompt
-        prompt = "What is the capital of France?"
-        
-        # Create a HumanMessage
-        human_message = HumanMessage(content=prompt)
-        
-        # Get the response from the LLM
-        response = groq_client_instance.llm.invoke([human_message])
-        
-        # Log the response
-        logger.info(f"Response: {response.content}")
+        # Extract and save the text to textdata folder
+        txt_path = loader.save_as_text(pdf_file)
+        print(f"Text extracted and saved to: {txt_path}")
 
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
+        # Optionally, print the first 500 characters
+        with open(txt_path, 'r', encoding='utf-8') as f:
+            text = f.read()
+            print(f"\nFirst 500 characters:\n{text[:500]}")
+        
+    except FileNotFoundError:
+        print("Please provide a valid PDF file path")
 
 if __name__ == "__main__":
     main()
