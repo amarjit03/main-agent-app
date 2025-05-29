@@ -4,6 +4,7 @@
 venv/
 ENV/
 env/
+main.py
 
 # Flask app data folder
 /app/data/
